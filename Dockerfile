@@ -63,5 +63,11 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start the application
+# Start the application with proper signal handling
+# Using exec form ensures signals are passed correctly to the Node.js process
 CMD ["node", "dist/index.js"]
+
+# Docker configuration for graceful shutdown:
+# - SIGTERM grace period: 30 seconds (configurable via docker stop -t)
+# - SIGKILL sent after grace period expires
+# - dumb-init ensures proper signal forwarding to Node.js process
