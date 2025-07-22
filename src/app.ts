@@ -3,7 +3,6 @@ import cors from 'cors'
 import 'dotenv/config'
 
 import healthRouter from './routes/health.route'
-import e from 'express'
 import { errorHandler } from './middlewares/error-handler'
 
 export const app = express()
