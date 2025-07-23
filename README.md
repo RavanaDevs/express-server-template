@@ -1,147 +1,156 @@
 # Express Server Template
 
-A production-ready Express.js server template with TypeScript, Docker support, comprehensive testing, graceful shutdown, and load balancing capabilities.
+A production-ready, enterprise-grade Express.js server template built with TypeScript, featuring comprehensive testing, Docker containerization, load balancing, graceful shutdown mechanisms, and database integration.
 
-## Features
+## 🚀 Features
 
-- 🚀 **Express.js** with TypeScript for type safety
-- 🧪 **Comprehensive Testing** with Jest and Supertest (96%+ coverage)
-- 🐳 **Docker Ready** with multi-stage builds and graceful shutdown
-- 🔄 **Load Balancer** with Nginx reverse proxy
-- 🏥 **Health Checks** with liveness and readiness endpoints
-- 📊 **Error Handling** with structured middleware
-- 🛡️ **Security** headers and rate limiting
-- 🔧 **Prisma ORM** for database operations
+### Core Technologies
+- **Express.js 5.1.0** with TypeScript for type safety and modern JavaScript features
+- **Prisma ORM** with PostgreSQL for robust database operations
+- **Jest & Supertest** comprehensive testing suite with 96%+ coverage
+- **Docker & Docker Compose** with multi-stage builds and production optimization
+- **Nginx Load Balancer** with reverse proxy and health checks
 
-## Quick Start
+### Production Features
+- ✅ **Graceful Shutdown** - Docker-compatible SIGTERM/SIGINT handling with 30s timeout
+- ✅ **Health Checks** - Kubernetes/Docker-ready liveness and readiness probes
+- ✅ **Error Handling** - Centralized error middleware with proper logging
+- ✅ **CORS Support** - Cross-origin resource sharing configuration
+- ✅ **Load Balancing** - Nginx reverse proxy with configurable replicas
+- ✅ **Security** - Non-root Docker user, security headers, rate limiting
+- ✅ **Monitoring** - Process tracking, connection management, health endpoints
 
-### Single Instance (Development)
+## 📁 Project Architecture
+
+```
+express-server-template/
+├── src/                           # Source code
+│   ├── app.ts                     # Express app configuration
+│   ├── index.ts                   # Server entry point with graceful shutdown
+│   ├── controllers/               # Request handlers
+│   │   └── health.controller.ts   # Health check endpoints
+│   ├── middlewares/               # Custom middleware
+│   │   └── error-handler.ts       # Global error handling
+│   └── routes/                    # Route definitions
+│       └── health.route.ts        # Health check routes
+├── tests/                         # Comprehensive test suite
+│   ├── setup.ts                   # Global test configuration
+│   ├── controllers/               # Controller unit tests
+│   ├── middlewares/               # Middleware unit tests
+│   ├── routes/                    # Route unit tests
+│   ├── integration/               # Integration tests
+│   ├── docker/                    # Docker-specific tests
+│   └── utils/                     # Utility tests
+├── prisma/                        # Database schema and migrations
+│   ├── schema.prisma              # Database schema definition
+│   └── migrations/                # Database migration files
+├── nginx/                         # Load balancer configuration
+│   └── nginx.conf                 # Nginx reverse proxy config
+├── docs/                          # Documentation
+│   ├── DOCKER.md                  # Docker deployment guide
+│   ├── TESTING.md                 # Testing documentation
+│   ├── GRACEFUL_SHUTDOWN.md       # Shutdown implementation details
+│   └── load-balancer.md           # Load balancing setup
+├── Dockerfile                     # Multi-stage container build
+├── docker-compose.yml             # Service orchestration
+├── jest.config.js                 # Test configuration
+├── test-runner.js                 # Custom test runner utility
+└── package.json                   # Dependencies and scripts
+```
+
+## 🛠️ Technology Stack
+
+### Backend Framework
+- **Express.js 5.1.0** - Fast, unopinionated web framework
+- **TypeScript 5.8.3** - Static type checking and modern ES features
+- **Node.js 22** - Latest LTS runtime environment
+
+### Database & ORM
+- **Prisma 6.11.1** - Next-generation ORM with type safety
+- **PostgreSQL** - Robust relational database
+- **Database Migrations** - Version-controlled schema changes
+
+### Testing Framework
+- **Jest 30.0.5** - JavaScript testing framework
+- **Supertest 7.1.3** - HTTP assertion library
+- **ts-jest 29.4.0** - TypeScript preprocessor for Jest
+- **96%+ Test Coverage** - Comprehensive test suite
+
+### DevOps & Containerization
+- **Docker** - Containerization with multi-stage builds
+- **Docker Compose** - Multi-service orchestration
+- **Nginx Alpine** - Lightweight reverse proxy and load balancer
+- **dumb-init** - Proper signal handling in containers
+
+### Development Tools
+- **pnpm** - Fast, disk space efficient package manager
+- **nodemon** - Development server with hot reload
+- **ESLint & Prettier** - Code formatting and linting
+
+## 🚦 Quick Start
+
+### Prerequisites
+- Node.js 22+ and pnpm
+- Docker and Docker Compose
+- PostgreSQL (for local development)
+
+### Local Development
 
 ```bash
+# Clone the repository
+git clone <repository-url>
+cd express-server-template
+
 # Install dependencies
 pnpm install
 
-# Run in development mode
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# Run database migrations
+pnpm prisma migrate dev
+
+# Start development server
 pnpm dev
-
-# Run tests
-pnpm test
-
-# Build for production
-pnpm build
 ```
 
-### Load Balanced Setup (Production)
+### Docker Development
 
 ```bash
-# Start 2 app replicas with Nginx load balancer
+# Start all services (app + nginx load balancer)
 docker-compose up --build
 
-# Test load balancing
-.\scripts\test-load-balancer.bat  # Windows
-./scripts/test-load-balancer.sh   # Linux/Mac
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
 ```
 
-## Architecture
+## 🔗 API Endpoints
 
-### Development
+### Health Check Endpoints
 
-```
-Client → Express App (Port 3000)
-```
+| Endpoint | Method | Description | Response |
+|----------|--------|-------------|----------|
+| `/health/liveness` | GET | Liveness probe for containers | `{"status":"ok","instance":"<hostname>","timestamp":"<ISO>"}` |
+| `/health/readyness` | GET | Readiness probe for containers | `{"status":"ok","instance":"<hostname>","timestamp":"<ISO>"}` |
 
-### Production (Load Balanced)
+### Test Endpoints
 
-```
-Internet → Nginx (Port 80) → Load Balancer → App1 + App2 (Port 3000)
-```
+| Endpoint | Method | Description | Response |
+|----------|--------|-------------|----------|
+| `/` | GET | Test error handling | `{"error":"Something went wrong on the server"}` |
 
-## API Endpoints
+## 🧪 Testing
 
-| Endpoint            | Method | Description                           |
-| ------------------- | ------ | ------------------------------------- |
-| `/health/liveness`  | GET    | Liveness probe for Kubernetes/Docker  |
-| `/health/readiness` | GET    | Readiness probe for Kubernetes/Docker |
+### Test Categories
 
-### Health Check Response
-
-```json
-{
-  "status": "ok",
-  "instance": "app1",
-  "timestamp": "2024-01-01T12:00:00.000Z"
-}
-```
-
-## Project Structure
-
-```
-├── src/
-│   ├── app.ts                 # Express app configuration
-│   ├── index.ts               # Server entry point with graceful shutdown
-│   ├── controllers/           # Request handlers
-│   ├── middlewares/           # Custom middleware
-│   └── routes/                # Route definitions
-├── tests/                     # Test suites
-├── nginx/                     # Nginx configuration for load balancing
-├── scripts/                   # Utility scripts
-├── docs/                      # Documentation
-├── prisma/                    # Database schema and migrations
-├── docker-compose.yml         # Multi-service orchestration
-└── Dockerfile                 # Container definition
-```
-
-## Docker Configuration
-
-### Single Service
-
-```yaml
-services:
-  app:
-    build: .
-    ports:
-      - '3000:3000'
-    env_file:
-      - .env
-```
-
-### Load Balanced (Current)
-
-```yaml
-services:
-  nginx: # Load balancer
-    image: nginx:alpine
-    ports:
-      - '80:80'
-
-  app1: # First instance
-    build: .
-    expose:
-      - '3000'
-
-  app2: # Second instance
-    build: .
-    expose:
-      - '3000'
-```
-
-## Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-# Application
-NODE_ENV=production
-PORT=3000
-INSTANCE_ID=app1
-
-# Database (if using Prisma)
-DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
-
-# Add your custom environment variables here
-```
-
-## Testing
+- **Unit Tests**: Controllers, middlewares, routes with mocked dependencies
+- **Integration Tests**: Full application testing with HTTP requests
+- **Docker Tests**: Graceful shutdown and signal handling
+- **Database Tests**: Prisma client configuration and setup
 
 ### Running Tests
 
@@ -149,170 +158,285 @@ DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
 # Run all tests
 pnpm test
 
-# Run tests in watch mode
+# Run tests in watch mode (development)
 pnpm test:watch
 
-# Run tests with coverage
+# Generate coverage report
 pnpm test:coverage
 
 # Run specific test file
 pnpm test health.controller.test.ts
+
+# Use custom test runner
+node test-runner.js coverage
+node test-runner.js controllers
 ```
 
 ### Test Coverage
 
-- **Controllers**: Health endpoint tests
-- **Middleware**: Error handling tests
-- **Routes**: HTTP route tests
-- **Integration**: End-to-end API tests
-- **Docker**: Container and graceful shutdown tests
+Current coverage metrics:
+- **Overall**: 96.55% statement coverage
+- **Controllers**: 100% coverage
+- **Middlewares**: 100% coverage
+- **Routes**: 100% coverage
+- **Integration**: Full API coverage
 
-## Load Balancing
+## 🐳 Docker Deployment
 
-### Features
+### Architecture Options
 
-- **Algorithm**: Least connections
+#### Single Instance (Development)
+```bash
+# Run single app container
+docker run -p 3000:3000 express-server-template
+```
+
+#### Load Balanced (Production)
+```bash
+# Run with nginx load balancer and multiple replicas
+docker-compose up --build
+# Access via: http://localhost:5000
+```
+
+### Docker Configuration
+
+#### Multi-Stage Build Process
+1. **Builder Stage**: Install dependencies, build TypeScript
+2. **Production Stage**: Minimal runtime with non-root user
+
+#### Security Features
+- Non-root user (nodejs:nodejs)
+- Minimal Alpine Linux base image
+- Only production dependencies in final image
+- Health checks for container orchestration
+
+#### Graceful Shutdown
+- **SIGTERM** handling with 30-second timeout
+- Connection tracking and cleanup
+- Database connection management
+- Docker-compatible signal forwarding with `dumb-init`
+
+## ⚖️ Load Balancing
+
+### Nginx Configuration
+- **Upstream**: Configurable app replicas
+- **Algorithm**: Round-robin (configurable)
 - **Health Checks**: Automatic failover for unhealthy instances
-- **Rate Limiting**: 10 req/s for API, 100 req/s for health checks
-- **Security**: Headers, gzip compression, connection keepalive
+- **Rate Limiting**: DDoS protection
+- **Security Headers**: XSS, CSRF protection
 
-### Testing Load Distribution
-
-```bash
-# Windows
-.\scripts\test-load-balancer.bat
-
-# Linux/Mac
-chmod +x ./scripts/test-load-balancer.sh
-./scripts/test-load-balancer.sh
-```
-
-### Scaling
-
-To add more app instances:
-
-1. Add new service in `docker-compose.yml`
-2. Update Nginx upstream configuration
-3. Restart services
+### Scaling Options
 
 ```bash
-# Scale to 3 instances (alternative method)
-docker-compose up --scale app=3
+# Scale to 3 replicas (current docker-compose configuration)
+docker-compose up --build
+
+# Manual scaling via Docker Compose
+docker-compose up --scale app=5
 ```
 
-## Graceful Shutdown
+## 🗄️ Database
 
-The application implements proper graceful shutdown for Docker containers:
+### Prisma Schema
+```prisma
+model User {
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String @unique
+  posts Post[]
+}
 
-- **SIGTERM**: Graceful shutdown with 30-second timeout
-- **SIGINT**: Immediate shutdown for development (Ctrl+C)
-- **Connection Tracking**: Closes existing connections properly
-- **Database**: Closes Prisma connections
+model Post {
+  id       Int    @id @default(autoincrement())
+  title    String
+  content  String
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId Int
+}
+```
 
-## Development
-
-### Scripts
-
+### Database Operations
 ```bash
-pnpm dev          # Start development server with hot reload
-pnpm build        # Build TypeScript to JavaScript
-pnpm start        # Start production server
-pnpm test         # Run test suite
-pnpm test:watch   # Run tests in watch mode
-pnpm lint         # Run ESLint
-pnpm format       # Format code with Prettier
+# Generate Prisma client
+pnpm prisma generate
+
+# Run migrations
+pnpm prisma migrate dev
+
+# Reset database
+pnpm prisma migrate reset
+
+# Open Prisma Studio
+pnpm prisma studio
 ```
 
-### Adding New Features
+## 🔧 Configuration
 
-1. **Controllers**: Add business logic in `src/controllers/`
-2. **Routes**: Define endpoints in `src/routes/`
-3. **Middleware**: Add custom middleware in `src/middlewares/`
-4. **Tests**: Write tests in `tests/` directory
+### Environment Variables
+```env
+# Application Configuration
+PORT=3000
+NODE_ENV=production
 
-## Deployment
+# Database Configuration
+DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
 
-### Docker Deployment
-
-```bash
-# Build and run single instance
-docker build -t my-app .
-docker run -p 3000:3000 my-app
-
-# Build and run with load balancer
-docker-compose up --build -d
+# Load Balancer Configuration (optional)
+INSTANCE_ID=app1
 ```
 
-### Health Checks
+### Docker Compose Variables
+- **Replicas**: Configure number of app instances (currently set to 3)
+- **Health Check**: Timing and retry configuration
+- **Grace Period**: Shutdown timeout settings
+- **Environment**: Pass-through environment variables
 
-The application includes Docker health checks:
+## 📊 Monitoring & Health Checks
 
-- **Interval**: 30 seconds
-- **Timeout**: 10 seconds
-- **Retries**: 3 attempts
-- **Start Period**: 30 seconds
+### Application Health
+- **Liveness**: `/health/liveness` - Basic application health
+- **Readiness**: `/health/readyness` - Application ready to receive traffic
+- **Instance Identification**: Each replica reports its hostname/ID
 
-## Monitoring
-
-### Nginx Status
-
-```bash
-# Access Nginx status (from within container network)
-curl http://localhost/nginx-status
+### Docker Health Checks
+```dockerfile
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:3000/health/liveness || exit 1
 ```
 
-### Application Logs
+### Nginx Health Monitoring
+- Upstream health checks
+- Automatic failover
+- Connection pooling
+- Request distribution metrics
 
-```bash
-# View all service logs
-docker-compose logs
+## 🔒 Security Features
 
-# View specific service logs
-docker-compose logs nginx
-docker-compose logs app1
-docker-compose logs app2
+### Container Security
+- Non-root user execution
+- Minimal Alpine Linux base
+- Security-focused multi-stage builds
+- Network isolation with Docker networks
 
-# Follow logs in real-time
-docker-compose logs -f
-```
-
-## Security
-
-### Implemented Security Measures
-
-- Rate limiting (DDoS protection)
+### Application Security
+- CORS configuration
+- Error handling without information disclosure
+- Rate limiting via Nginx
 - Security headers (XSS, CSRF protection)
-- No server tokens exposure
-- Network isolation (Docker)
-- Environment variable management
 
-### Security Headers
+### Production Recommendations
+- Use secrets management for sensitive data
+- Configure HTTPS with SSL certificates
+- Implement proper logging and monitoring
+- Regular security updates and vulnerability scanning
 
+## 📝 Scripts Reference
+
+```json
+{
+  "dev": "nodemon --exec ts-node src/index.ts",
+  "build": "tsc --build tsconfig.json",
+  "start": "node dist/index.js",
+  "test": "jest",
+  "test:watch": "jest --watch",
+  "test:coverage": "jest --coverage",
+  "docker:build": "docker build -t express-server-template .",
+  "docker:run": "docker run -d --name express-app --stop-timeout 30 -p 3000:3000 express-server-template",
+  "docker:stop": "docker stop express-app && docker rm express-app",
+  "docker:compose:up": "docker-compose up -d",
+  "docker:compose:down": "docker-compose down"
+}
 ```
-X-Frame-Options: SAMEORIGIN
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-Referrer-Policy: strict-origin-when-cross-origin
-```
 
-## Documentation
+## 🚀 Deployment Strategies
 
-- [Load Balancer Setup](./docs/load-balancer.md) - Detailed load balancing configuration
-- [Docker Environment Variables](./docs/docker-environment.md) - Environment variable best practices
-- [Testing Guide](./docs/testing.md) - Comprehensive testing documentation
+### Development
+1. Local development with `pnpm dev`
+2. Docker development with `docker-compose up`
+3. Testing with `pnpm test:watch`
 
-## Contributing
+### Staging
+1. Build with `docker build`
+2. Run integration tests
+3. Deploy with Docker Compose
 
+### Production
+1. Multi-replica deployment with load balancer
+2. Database migrations with `prisma migrate deploy`
+3. Health check monitoring
+4. Graceful shutdown compliance
+
+## 🤝 Contributing
+
+### Development Workflow
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+3. Write tests for new functionality
+4. Ensure all tests pass (`pnpm test`)
+5. Commit changes (`git commit -m 'Add amazing feature'`)
+6. Push to branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
-## License
+### Code Standards
+- TypeScript with strict type checking
+- Jest tests for all new functionality
+- Docker compatibility for all features
+- Documentation for public APIs
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 📚 Documentation
 
-## Support
+- [Docker Deployment Guide](./docs/DOCKER.md) - Comprehensive Docker setup
+- [Testing Guide](./docs/TESTING.md) - Testing framework and best practices
+- [Graceful Shutdown](./docs/GRACEFUL_SHUTDOWN.md) - Signal handling implementation
+- [Load Balancer Setup](./docs/load-balancer.md) - Nginx configuration details
 
-For support, please open an issue in the GitHub repository or contact the development team.
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Docker containers not starting**
+```bash
+# Check logs
+docker-compose logs
+
+# Check health status
+docker-compose ps
+```
+
+**Load balancer 502 errors**
+```bash
+# Verify app containers are healthy
+docker-compose ps
+curl http://localhost:3000/health/liveness
+
+# Check nginx configuration
+docker-compose exec nginx nginx -t
+```
+
+**Database connection issues**
+```bash
+# Verify DATABASE_URL in .env
+# Check database server status
+# Run migrations: pnpm prisma migrate dev
+```
+
+### Performance Optimization
+- Configure nginx worker processes
+- Tune Docker resource limits
+- Optimize database connection pooling
+- Monitor application metrics
+
+## 📄 License
+
+This project is licensed under the ISC License - see the LICENSE file for details.
+
+## 💬 Support
+
+For support and questions:
+- Open an issue in the GitHub repository
+- Check existing documentation in the `docs/` directory
+- Review the comprehensive test suite for usage examples
+
+---
+
+**Built with ❤️ for production-ready Express.js applications**
