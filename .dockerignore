@@ -1,0 +1,10 @@
+/node_modules
+/coverage
+/docs
+/dist
+/tests
+
+.prettierrc
+jest.config.js
+test-runner.js
+.gitignore
